@@ -1,0 +1,161 @@
+{% comment %} <h1>Firebase Sensor Data</h1>
+<div id = "div">
+<p><strong>Temperature:</strong> <span id="temperature-display">{{ temperature }} °C</span></p>
+<p><strong>turbidity:</strong> <span id="turbidity-display">{{ turbidity }} %</span></p>
+</div>
+<script>
+    setInterval(function() {
+        fetch('/read/')  // Ensure this URL returns JSON data with temperature and turbidity
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('div').innerHTML = data;
+            })
+            .catch(err => console.error('Error fetching data:', err));
+    }, 5000);  // Fetch data every 5 seconds
+</script>  {% endcomment %}
+{% load static %}
+<html lang="en">
+ <head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Mobile Navigation Bar
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+ </head>
+ <body class="bg-gray-100 font-sans">
+  <header class="flex justify-between items-center p-4 bg-gray-800 text-white rounded-lg">
+   <div class="drawer shadow-lg" id="drawer-toggle">
+    <i class="fas fa-bars text-2xl">
+    </i>
+   </div>
+   <div class="logo">
+    <img alt="Company logo with a water droplet and the text 'AquaIntegrity'" class="h-16 rounded-lg" height="100" src="templates/logo.jpg" width="100"/>
+   </div>
+  </header>
+  <div class="drawer-menu fixed top-0 left-0 w-64 h-full bg-gray-800 text-white transform -translate-x-full transition-transform duration-300 rounded-lg shadow-lg" id="drawer-menu">
+   <ul class="p-4">
+    <li class="mb-4">
+     <img alt="Profile picture of a user" class="w-16 h-16 rounded-full border-2 border-gray-300 p-1" height="75" src="https://images.unsplash.com/photo-1736325263301-488931888151?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyOHx8fGVufDB8fHx8fA%3D%3D" width="75"/>
+    </li>
+    <li class="text-xl mb-4">
+     AquaIntegrity
+    </li>
+    <li class="mb-2">
+     <a class="block p-2 hover:bg-gray-700 rounded-lg" href="/">
+        <i class="fas fa-home"></i>  Home
+     </a>
+    </li>
+    <li class="mb-2">
+     <a class="block p-2 hover:bg-gray-700 rounded-lg" href="/about">
+        <i class="fas fa-info-circle"></i> About Us
+     </a>
+    </li>
+    <li class="mb-2">
+     <a class="block p-2 hover:bg-gray-700 rounded-lg" href="/services">
+        <i class="fas fa-concierge-bell"></i> Services
+     </a>
+    </li>
+    <li class="mb-2">
+     <a class="block p-2 hover:bg-gray-700 rounded-lg" href="/contact">
+        <i class="fas fa-envelope"></i> Contact Us
+     </a>
+    </li>
+    <li class="mb-2">
+     <a class="block p-2 hover:bg-gray-700 rounded-lg" href="/graph">
+        <i class="fas fa-chart-line"></i> Graphs
+     </a>
+    </li>
+   </ul>
+  </div>
+  <main class="p-4">
+   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-4/5 mx-auto h-4/5">
+    <div class="bg-white p-8 rounded-lg shadow-xl flex flex-col justify-center items-center">
+        <img 
+            alt="Thermometer icon representing temperature" 
+            class="w-80 h-60 mb-4 rounded-lg shadow-lg" 
+            src="https://storage.googleapis.com/a1aa/image/sAszyghMgZY7F1HRaLaG0hg7T56UkzoGvvzUindTxe6oDdDKA.jpg" 
+        />
+        <p class="text-center text-2xl shadow-md p-2 rounded-md bg-gray-100">
+            Temperature:
+            <span id = 'temperature-display' class="font-bold text-red-600 shadow-sm p-1 rounded">
+                {{ temperature }} °C
+            </span>
+        </p>
+    </div>
+    
+    <div class="bg-white p-8 rounded-lg shadow-xl flex flex-col justify-center items-center">
+        <img 
+            alt="turbidity icon representing turbidity levels" 
+            class="w-80 h-60 mb-4 rounded-lg shadow-lg" 
+            src="https://storage.googleapis.com/a1aa/image/ggMphlXQJpZ9BdmRCU7poFGzcYbDpJNP7C7AeSUwWeiQH6GUA.jpg" 
+        />
+        <p class="text-center text-2xl shadow-md p-2 rounded-md bg-gray-100">
+            Turbidity:
+            <span id = 'turbidity-display' class="font-bold text-blue-600 shadow-sm p-1 rounded">
+                {{ turbidity }} %
+            </span>
+        </p>
+    </div>
+    
+    <div class="bg-white p-8 rounded-lg shadow-xl flex flex-col justify-center items-center">
+        <img 
+            alt="Total dissolved salts" 
+            class="w-80 h-60 mb-4 rounded-lg shadow-lg" 
+            src="https://www.renkeer.com/wp-content/uploads/2024/05/conductivity-in-water.jpg" 
+        />
+        <p class="text-center text-2xl shadow-md p-2 rounded-md bg-gray-100">
+            Conductivity:
+            <span id = 'TDS-display' class="font-bold text-green-600 shadow-sm p-1 rounded">
+                {{ TDS }} S m<sup>-1</sup>
+            </span>
+        </p>
+    </div>
+    
+    <div class="bg-white p-8 rounded-lg shadow-xl flex flex-col justify-center items-center">
+        <img 
+            alt="pH scale icon representing pH levels" 
+            class="w-80 h-60 mb-4 rounded-lg shadow-lg" 
+            src="https://storage.googleapis.com/a1aa/image/zY9rphAX4LKTMtxD65vROrf1Q3oHTuzDl17pgB9tRCwpDdDKA.jpg" 
+        />
+        <p class="text-center text-2xl shadow-md p-2 rounded-md bg-gray-100">
+            pH:
+            <span id = 'pH-display' class="font-bold text-purple-600 shadow-sm p-1 rounded">
+                {{ pH }}
+            </span>
+        </p>
+    </div>
+    
+   </div>
+  </main>
+  <script>
+   const drawerToggle = document.getElementById('drawer-toggle');
+    const drawerMenu = document.getElementById('drawer-menu');
+
+    drawerToggle.addEventListener('click', () => {
+      drawerMenu.classList.toggle('-translate-x-full');
+    });
+
+
+    setInterval(function () {
+        
+        fetch(`/read/?timestamp=${new Date().getTime()}`)  // Adding timestamp to prevent caching
+            .then(response => response.json())
+            .then(data => {
+                // Update the DOM with the new data
+                document.getElementById('temperature-display').textContent = `${data.temperature} °C`;
+                document.getElementById('turbidity-display').textContent = `${data.turbidity} %`;
+                document.getElementById('TDS-display').textContent = `${data.TDS} ppm`;
+                document.getElementById('pH-display').textContent = `${data.pH}`;
+            })
+            .catch(err => console.error('Error fetching data:', err));
+    }, 1000);  // Refresh every second
+    
+
+  </script>
+ </body>
+</html>

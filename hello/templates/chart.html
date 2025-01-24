@@ -1,0 +1,230 @@
+<!-- filepath: /home/slok/water_quality_analysis/hello/templates/chart.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor Data Over Time</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            background: #f4f4f4;
+        }
+
+        .chart-container {
+            width: 80%;
+            max-width: 800px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+        }
+    </style>
+</head>
+<body>
+    <a class="block p-2 bg-gray-800 text-white hover:bg-gray-700 transition duration-300 shadow-md" href="/">
+        <i class="fas fa-home"></i> Home
+    </a>
+    <div class="chart-container">
+        <canvas id="temperatureChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="turbidityChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="TDSChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="pHChart"></canvas>
+    </div>
+    <script>
+        var temperatureCtx = document.getElementById('temperatureChart').getContext('2d');
+        var turbidityCtx = document.getElementById('turbidityChart').getContext('2d');
+        var TDSCtx = document.getElementById('TDSChart').getContext('2d');
+        var pHCtx = document.getElementById('pHChart').getContext('2d');
+
+        var xValues = [];
+        var temperatureValues = [];
+        var turbidityValues = [];
+        var TDSValues = [];
+        var pHValues = [];
+        var x = 0;
+
+        var temperatureChart = new Chart(temperatureCtx, {
+            type: 'line',
+            data: {
+                labels: xValues,
+                datasets: [{
+                    label: 'Temperature (°C)',
+                    data: temperatureValues,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'Time (s)'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Temperature (°C)'
+                        }
+                    }
+                }
+            }
+        });
+
+        var turbidityChart = new Chart(turbidityCtx, {
+            type: 'line',
+            data: {
+                labels: xValues,
+                datasets: [{
+                    label: 'Turbidity (%)',
+                    data: turbidityValues,
+                    borderColor: 'rgba(192, 75, 75, 1)',
+                    borderWidth: 2,
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'Time (s)'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Turbidity (%)'
+                        }
+                    }
+                }
+            }
+        });
+
+        var TDSChart = new Chart(TDSCtx, {
+            type: 'line',
+            data: {
+                labels: xValues,
+                datasets: [{
+                    label: 'TDS',
+                    data: TDSValues,
+                    borderColor: 'rgba(75, 75, 192, 1)',
+                    borderWidth: 2,
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'Time (s)'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'TDS'
+                        }
+                    }
+                }
+            }
+        });
+
+        var pHChart = new Chart(pHCtx, {
+            type: 'line',
+            data: {
+                labels: xValues,
+                datasets: [{
+                    label: 'pH',
+                    data: pHValues,
+                    borderColor: 'rgba(75, 192, 75, 1)',
+                    borderWidth: 2,
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'Time (s)'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'pH'
+                        }
+                    }
+                }
+            }
+        });
+
+        function fetchData() {
+            fetch('/read/')
+                .then(response => response.json())
+                .then(data => {
+                    x += 1;
+                    xValues.push(x);
+                    temperatureValues.push(data.temperature);
+                    turbidityValues.push(data.turbidity);
+                    TDSValues.push(data.TDS);
+                    pHValues.push(data.pH);
+
+                    if (xValues.length > 10) {
+                        xValues.shift();
+                        temperatureValues.shift();
+                        turbidityValues.shift();
+                        TDSValues.shift();
+                        pHValues.shift();
+                    }
+
+                    temperatureChart.update();
+                    turbidityChart.update();
+                    TDSChart.update();
+                    pHChart.update();
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        setInterval(fetchData, 1000);
+    </script>
+</body>
+</html>
